@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- 
+        Monument & Town Color Tracker for Doshin the Giant
+        v1.3 by psyouloveme
+        480x640 (portrait)
+    -->
+    <meta charset="UTF-8" />
+    <title>Doshin Tracker</title>
+    <style type="text/css">
+        body {
+            padding: 0px;
+            margin: 0px;
+            background-color: black;
+            overflow: hidden;
+        }
+        .main-grid {
+            background-color: black;
+            display: grid;
+            grid-template-columns: 114px 114px 114px 114px;
+            grid-template-rows: 74px 74px 74px 74px;
+            column-gap: 6px;
+            row-gap: 6px;
+            width: 480px;
+            padding: 0px;
+            margin: 0px;
+            border: 3px black solid;
+            box-sizing: border-box;
+            height: 320px;
+        }
+        .monument {
+            width: 114px;
+            height: 74px;
+            box-sizing: content-box;
+            background-size: contain;
+            background-color: black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0px; 
+            padding: 0px;
+        }
+        .completed {
+            mix-blend-mode: color;
+        }
+        .hidden {
+            display: none;
+        }
+        .outer-wrap {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            gap: 0px;
+            padding: 0px;
+            margin: 0px;
+            width: 480px;
+        }
+        .town-grid-wrapper {
+            background-image: url('./img/map.png');
+            height: 320px;
+            background-repeat: no-repeat;
+            background-size: 768px 768px;
+            background-position-y: -231px;
+            background-position-x: -46px;
+            flex-grow: 0;
+            image-rendering: pixelated;
+        }
+        
+        .town-grid {
+            display: grid;
+            grid-template-columns: 14px repeat(8, 7px) 14px;
+            grid-template-rows:    14px repeat(8, 7px) 14px;
+        }
+        .town-border-red, .tcr, .r {
+            background-color: #ff0000;
+        }
+        .town-border-yellow, .tcy, .y {
+            background-color: #ffff00;
+        }
+        .town-border-green, .tcg, .g {
+            background-color: #00db29;
+        }
+        .town-border-blue, .tcb, .b {
+            background-color: #004dff;
+        }
+        .town-border-box, .tb {
+            background-color: black;
+        }
+
+        .tt, .tcr, .tcy,
+        .tcb, .tcg,
+        .tb,  .tc {
+            min-height: 7px;
+            min-width:  7px;
+        }
+        .town-grid {
+            height: 84px;
+            width: 84px;
+            border: 4px solid black;
+        }
+        #town-grid-red {
+            position: relative;
+            top: 11px;
+            left: 247px;
+        }
+        #town-grid-blue {
+            position: relative;
+            top: 16px;
+            left: 355px;
+        }
+        #town-grid-green {
+            position: relative;
+            top: -69px;
+            left: 208px;
+        }
+        #town-grid-yellow {
+            position: relative;
+            top: -55px;
+            left: 34px;
+        }
+        /* .tcy, .tcb, .tcg, .tcr {
+            background-color: rgba(0, 0, 0, 0);
+        } */
+        @keyframes spin {
+            from { transform: rotate(0deg) }
+            to { transform: rotate(360deg) }
+        }
+        .spin { animation: spin 3s linear infinite; }
+        .building {
+            width: 64px;
+            height: 64px;
+        }
+        /* .town-grid {
+            display: none;
+        } */
+    </style>
+    <link rel="prefetch" href="./img/01.png" />
+    <link rel="prefetch" href="./img/02.png" />
+    <link rel="prefetch" href="./img/03.png" />
+    <link rel="prefetch" href="./img/04.png" />
+    <link rel="prefetch" href="./img/05.png" />
+    <link rel="prefetch" href="./img/06.png" />
+    <link rel="prefetch" href="./img/07.png" />
+    <link rel="prefetch" href="./img/08.png" />
+    <link rel="prefetch" href="./img/09.png" />
+    <link rel="prefetch" href="./img/10.png" />
+    <link rel="prefetch" href="./img/11.png" />
+    <link rel="prefetch" href="./img/12.png" />
+    <link rel="prefetch" href="./img/13.png" />
+    <link rel="prefetch" href="./img/14.png" />
+    <link rel="prefetch" href="./img/15.png" />
+    <link rel="prefetch" href="./img/16.png" />
+    <link rel="prefetch" href="./img/01-love-overlay.png" />
+    <link rel="prefetch" href="./img/02-love-overlay.png" />
+    <link rel="prefetch" href="./img/03-love-overlay.png" />
+    <link rel="prefetch" href="./img/04-love-overlay.png" />
+    <link rel="prefetch" href="./img/05-love-overlay.png" />
+    <link rel="prefetch" href="./img/06-love-overlay.png" />
+    <link rel="prefetch" href="./img/07-love-overlay.png" />
+    <link rel="prefetch" href="./img/08-love-overlay.png" />
+    <link rel="prefetch" href="./img/09-love-overlay.png" />
+    <link rel="prefetch" href="./img/10-love-overlay.png" />
+    <link rel="prefetch" href="./img/11-love-overlay.png" />
+    <link rel="prefetch" href="./img/12-love-overlay.png" />
+    <link rel="prefetch" href="./img/13-love-overlay.png" />
+    <link rel="prefetch" href="./img/14-love-overlay.png" />
+    <link rel="prefetch" href="./img/15-love-overlay.png" />
+    <link rel="prefetch" href="./img/16-love-overlay.png" />
+</head>
+<body>
+    <div class="outer-wrap">
+        <div class="main-grid">
+            <div class="monument" style="background-image: url('./img/01.png');" data-complete="false" data-building="false" data-default-image="./img/01.png" data-complete-image="./img/01-love-overlay.png" data-r="1" data-b="0" data-y="0" data-g="0" ></div>
+            <div class="monument" style="background-image: url('./img/02.png');" data-complete="false" data-building="false" data-default-image="./img/02.png" data-complete-image="./img/02-love-overlay.png" data-r="0" data-b="1" data-y="0" data-g="0" ></div>
+            <div class="monument" style="background-image: url('./img/03.png');" data-complete="false" data-building="false" data-default-image="./img/03.png" data-complete-image="./img/03-love-overlay.png" data-r="0" data-b="0" data-y="1" data-g="0" ></div>
+            <div class="monument" style="background-image: url('./img/04.png');" data-complete="false" data-building="false" data-default-image="./img/04.png" data-complete-image="./img/04-love-overlay.png" data-r="0" data-b="0" data-y="0" data-g="1" ></div>
+            <div class="monument" style="background-image: url('./img/05.png');" data-complete="false" data-building="false" data-default-image="./img/05.png" data-complete-image="./img/05-love-overlay.png" data-r="1" data-b="1" data-y="0" data-g="0" ></div>
+            <div class="monument" style="background-image: url('./img/06.png');" data-complete="false" data-building="false" data-default-image="./img/06.png" data-complete-image="./img/06-love-overlay.png" data-r="1" data-b="0" data-y="1" data-g="0" ></div>
+            <div class="monument" style="background-image: url('./img/07.png');" data-complete="false" data-building="false" data-default-image="./img/07.png" data-complete-image="./img/07-love-overlay.png" data-r="1" data-b="0" data-y="0" data-g="1" ></div>
+            <div class="monument" style="background-image: url('./img/08.png');" data-complete="false" data-building="false" data-default-image="./img/08.png" data-complete-image="./img/08-love-overlay.png" data-r="0" data-b="1" data-y="1" data-g="0" ></div>
+            <div class="monument" style="background-image: url('./img/09.png');" data-complete="false" data-building="false" data-default-image="./img/09.png" data-complete-image="./img/09-love-overlay.png" data-r="0" data-b="1" data-y="0" data-g="1" ></div>
+            <div class="monument" style="background-image: url('./img/10.png');" data-complete="false" data-building="false" data-default-image="./img/10.png" data-complete-image="./img/10-love-overlay.png" data-r="0" data-b="0" data-y="1" data-g="1" ></div>
+            <div class="monument" style="background-image: url('./img/11.png');" data-complete="false" data-building="false" data-default-image="./img/11.png" data-complete-image="./img/11-love-overlay.png" data-r="1" data-b="1" data-y="1" data-g="0" ></div>
+            <div class="monument" style="background-image: url('./img/12.png');" data-complete="false" data-building="false" data-default-image="./img/12.png" data-complete-image="./img/12-love-overlay.png" data-r="1" data-b="1" data-y="0" data-g="1" ></div>
+            <div class="monument" style="background-image: url('./img/13.png');" data-complete="false" data-building="false" data-default-image="./img/13.png" data-complete-image="./img/13-love-overlay.png" data-r="1" data-b="0" data-y="1" data-g="1" ></div>
+            <div class="monument" style="background-image: url('./img/14.png');" data-complete="false" data-building="false" data-default-image="./img/14.png" data-complete-image="./img/14-love-overlay.png" data-r="0" data-b="1" data-y="1" data-g="1" ></div>
+            <div class="monument" style="background-image: url('./img/15.png');" data-complete="false" data-building="false" data-default-image="./img/15.png" data-complete-image="./img/15-love-overlay.png" data-r="1" data-b="1" data-y="1" data-g="1" ></div>
+            <div class="monument" style="background-image: url('./img/16.png');" data-complete="false" data-building="false" data-default-image="./img/16.png" data-complete-image="./img/16-love-overlay.png" data-r="0" data-b="0" data-y="0" data-g="0" ></div>
+        </div>
+        <div class="town-grid-wrapper">
+            <div class="town-grid" id="town-grid-red" data-color="r" data-r="1" data-b="0" data-g="0" data-y="0">
+                <div class="tt r"></div> <div class="tt r"></div>   <div class="tt r"></div>  <div class="tt r"></div>  <div class="tt r"></div>  <div class="tt b"></div>  <div class="tt b"></div>  <div class="tt b"></div>  <div class="tt b"></div>  <div class="tt b"></div> 
+                <div class="tt r"></div> <div class="tc nw"></div>  <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tt b"></div> 
+                <div class="tt r"></div> <div class="tc nw"></div>  <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tt b"></div>
+                <div class="tt r"></div> <div class="tc nw"></div>  <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tt b"></div>
+                <div class="tt r"></div> <div class="tc nw"></div>  <div class="tc nw"></div> <div class="tc nw"></div> <div class="tcr c"></div>   <div class="tcr c"></div>   <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tt b"></div>
+                <div class="tt y"></div> <div class="tc sw"></div>  <div class="tc sw"></div> <div class="tc sw"></div> <div class="tcr c"></div>   <div class="tcr c"></div>   <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tt g"></div>
+                <div class="tt y"></div> <div class="tc sw"></div>  <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tt g"></div>
+                <div class="tt y"></div> <div class="tc sw"></div>  <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tt g"></div>
+                <div class="tt y"></div> <div class="tc sw"></div>  <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tt g"></div>  
+                <div class="tt y"></div> <div class="tt y"></div>   <div class="tt y"></div>  <div class="tt y"></div>  <div class="tt y"></div>  <div class="tt g"></div>  <div class="tt g"></div>  <div class="tt g"></div>  <div class="tt g"></div>  <div class="tt g"></div> 
+            </div>
+            <div class="town-grid" id="town-grid-blue" data-color="b" data-r="0" data-b="1" data-g="0" data-y="0">
+                <div class="tt r"></div> <div class="tt r"></div>   <div class="tt r"></div>  <div class="tt r"></div>  <div class="tt r"></div>  <div class="tt b"></div>  <div class="tt b"></div>  <div class="tt b"></div>  <div class="tt b"></div>  <div class="tt b"></div> 
+                <div class="tt r"></div> <div class="tc nw"></div>  <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tt b"></div> 
+                <div class="tt r"></div> <div class="tc nw"></div>  <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tt b"></div>
+                <div class="tt r"></div> <div class="tc nw"></div>  <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tt b"></div>
+                <div class="tt r"></div> <div class="tc nw"></div>  <div class="tc nw"></div> <div class="tc nw"></div> <div class="tcb c"></div>   <div class="tcb c"></div>   <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tt b"></div>
+                <div class="tt y"></div> <div class="tc sw"></div>  <div class="tc sw"></div> <div class="tc sw"></div> <div class="tcb c"></div>   <div class="tcb c"></div>   <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tt g"></div>
+                <div class="tt y"></div> <div class="tc sw"></div>  <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tt g"></div>
+                <div class="tt y"></div> <div class="tc sw"></div>  <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tt g"></div>
+                <div class="tt y"></div> <div class="tc sw"></div>  <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tt g"></div>  
+                <div class="tt y"></div> <div class="tt y"></div>   <div class="tt y"></div>  <div class="tt y"></div>  <div class="tt y"></div>  <div class="tt g"></div>  <div class="tt g"></div>  <div class="tt g"></div>  <div class="tt g"></div>  <div class="tt g"></div>             </div> 
+            <div class="town-grid" id="town-grid-green" data-color="g" data-r="0" data-b="0" data-g="1" data-y="0">
+                <div class="tt r"></div> <div class="tt r"></div>   <div class="tt r"></div>  <div class="tt r"></div>  <div class="tt r"></div>  <div class="tt b"></div>  <div class="tt b"></div>  <div class="tt b"></div>  <div class="tt b"></div>  <div class="tt b"></div> 
+                <div class="tt r"></div> <div class="tc nw"></div>  <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tt b"></div> 
+                <div class="tt r"></div> <div class="tc nw"></div>  <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tt b"></div>
+                <div class="tt r"></div> <div class="tc nw"></div>  <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tt b"></div>
+                <div class="tt r"></div> <div class="tc nw"></div>  <div class="tc nw"></div> <div class="tc nw"></div> <div class="tcg c"></div>   <div class="tcg c"></div>   <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tt b"></div>
+                <div class="tt y"></div> <div class="tc sw"></div>  <div class="tc sw"></div> <div class="tc sw"></div> <div class="tcg c"></div>   <div class="tcg c"></div>   <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tt g"></div>
+                <div class="tt y"></div> <div class="tc sw"></div>  <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tt g"></div>
+                <div class="tt y"></div> <div class="tc sw"></div>  <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tt g"></div>
+                <div class="tt y"></div> <div class="tc sw"></div>  <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tt g"></div>  
+                <div class="tt y"></div> <div class="tt y"></div>   <div class="tt y"></div>  <div class="tt y"></div>  <div class="tt y"></div>  <div class="tt g"></div>  <div class="tt g"></div>  <div class="tt g"></div>  <div class="tt g"></div>  <div class="tt g"></div> 
+            </div> 
+            <div class="town-grid" id="town-grid-yellow" data-color="y" data-r="0" data-b="0" data-g="0" data-y="1">
+                <div class="tt r"></div> <div class="tt r"></div>   <div class="tt r"></div>  <div class="tt r"></div>  <div class="tt r"></div>  <div class="tt b"></div>  <div class="tt b"></div>  <div class="tt b"></div>  <div class="tt b"></div>  <div class="tt b"></div> 
+                <div class="tt r"></div> <div class="tc nw"></div>  <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tt b"></div> 
+                <div class="tt r"></div> <div class="tc nw"></div>  <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tt b"></div>
+                <div class="tt r"></div> <div class="tc nw"></div>  <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tt b"></div>
+                <div class="tt r"></div> <div class="tc nw"></div>  <div class="tc nw"></div> <div class="tc nw"></div> <div class="tcy c"></div>   <div class="tcy c"></div>   <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tt b"></div>
+                <div class="tt y"></div> <div class="tc sw"></div>  <div class="tc sw"></div> <div class="tc sw"></div> <div class="tcy c"></div>   <div class="tcy c"></div>   <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tt g"></div>
+                <div class="tt y"></div> <div class="tc sw"></div>  <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tt g"></div>
+                <div class="tt y"></div> <div class="tc sw"></div>  <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tt g"></div>
+                <div class="tt y"></div> <div class="tc sw"></div>  <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tt g"></div>  
+                <div class="tt y"></div> <div class="tt y"></div>   <div class="tt y"></div>  <div class="tt y"></div>  <div class="tt y"></div>  <div class="tt g"></div>  <div class="tt g"></div>  <div class="tt g"></div>  <div class="tt g"></div>  <div class="tt g"></div> 
+            </div>
+        </div>
+    </div>
+</body>
+<footer>
+    <script type="text/javascript">
+        function swapImages(monumentCell) {
+            if (monumentCell !== null && monumentCell !== undefined) {
+                const isComplete = monumentCell.dataset.complete === "true";
+                const isBuilding = monumentCell.dataset.building === "true";
+                let newImage;
+                if (isComplete) {
+                    newImage = monumentCell.dataset.defaultImage;
+                } else {
+                    newImage = monumentCell.dataset.completeImage;
+                }
+                if (isBuilding) {
+                    monumentCell.dataset.building = "false";
+                    monumentCell.firstElementChild.remove();
+                }
+                monumentCell.dataset.complete = isComplete ? "false" : "true";
+                monumentCell.style.backgroundImage = "url('" + newImage + "')";
+                
+            }
+        }
+
+        function toggleBuilding(monumentCell) {
+            if (monumentCell != null && monumentCell !== undefined) {
+                const isComplete = monumentCell.dataset.complete === "true";
+                const isBuilding = monumentCell.dataset.building === "true";
+                let newImage;
+                if (isBuilding) {
+                    // remove loading indicator
+                    monumentCell.dataset.building = "false";
+                    monumentCell.firstElementChild.remove();
+                } else {
+                    if (isComplete) {
+                        monumentCell.dataset.complete = "false";
+                        monumentCell.style.backgroundImage = "url('" + monumentCell.dataset.defaultImage + "')";
+                    }
+                    // add loading indicator
+                    monumentCell.dataset.building = "true";
+                    const loadingImg = document.createElement("img");
+                    loadingImg.src = "./img/building.png";
+                    loadingImg.classList.add("building");
+                    loadingImg.classList.add("spin");
+                    loadingImg.addEventListener("mousedown", onMouseDown);
+                    loadingImg.addEventListener("contextmenu", trapContextMenu);
+                    monumentCell.append(loadingImg);
+                }
+            }
+        }
+
+        function onMouseDown(e) {
+            if (e.target != null && e.target !== undefined) {
+                const monumentCell = e.target.localName === "img" ? e.target.parentNode : e.target;
+                if (e.button === 0) {
+                    swapImages(monumentCell);
+                } else if (e.button === 2) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleBuilding(monumentCell);
+                    return false;
+                }
+            }
+        }
+
+        function trapContextMenu(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        }
+
+        var cells = document.querySelectorAll(".monument");
+        for (var i = 0; i < cells.length; i++) {
+            if (cells[i] != null && cells[i] !== undefined) {
+                cells[i].addEventListener("mousedown", onMouseDown);
+                cells[i].addEventListener("contextmenu", trapContextMenu);
+            }
+        }
+
+        function changeTownColor(town, colorToChange, quadrant) {
+            const townColor = town.dataset.color;
+            if (colorToChange === townColor) {
+                return;
+            }
+            let cellsToColor = town.querySelectorAll(`.tc.${quadrant}`);
+            if (town.dataset[colorToChange] === "1") {
+                for (let i = 0; i < cellsToColor.length; i++) {
+                    cellsToColor[i].classList.remove(colorToChange)
+                    cellsToColor[i].classList.add(townColor)
+                }
+                town.dataset[colorToChange] = "0";
+            } else {
+                for (let i = 0; i < cellsToColor.length; i++) {
+                    cellsToColor[i].classList.remove(townColor)
+                    cellsToColor[i].classList.add(colorToChange)
+                }
+                town.dataset[colorToChange] = "1";
+            }
+        }
+
+        function getColors(monumentOrTown) {
+            return {
+                r: monumentOrTown.dataset['r'] === "1",
+                b: monumentOrTown.dataset['b'] === "1",
+                y: monumentOrTown.dataset['y'] === "1",
+                g: monumentOrTown.dataset['g'] === "1"
+            };
+        }
+        function compareColors (a, b) {
+            if (a === null || a === undefined || b === null || b === undefined) {
+                return false;
+            }
+            if (a.r !== b.r) {
+                return false;
+            }
+            if (a.b !== b.b) {
+                return false;
+            }
+            if (a.y !== b.y) {
+                return false;
+            }
+            if (a.g !== b.g) {
+                return false;
+            }
+            return true;
+        }
+
+        function setTownBuilding(town) {
+            const townColors = getColors(town);
+            var cells = document.querySelectorAll(".monument");
+            for (var i = 0; i < cells.length; i++) {
+                if (cells[i] != null && cells[i] !== undefined) {
+                    const monumentColors = getColors(cells[i]);
+                    if (compareColors(townColors, monumentColors)) {
+                        toggleBuilding(cells[i]);
+                        return;
+                    }
+                }
+            }
+        }
+
+        function toggleTownColorByOuter(e) {
+            const town = e.target.parentNode;
+            if (e.button === 2) {
+                setTownBuilding(town);
+                return;
+            }
+            let colorToChange, quadrant;
+            if (e.target.classList.contains('r')) {
+                colorToChange = 'r';
+                quadrant = 'nw';
+            } else if (e.target.classList.contains('g')) {
+                colorToChange = 'g';
+                quadrant = 'se';
+            } else if (e.target.classList.contains('b')) {
+                colorToChange = 'b';
+                quadrant = 'ne'
+            } else if (e.target.classList.contains('y')) {
+                colorToChange = 'y';
+                quadrant = 'sw'
+            }
+            changeTownColor(town, colorToChange, quadrant);
+        }
+
+        function toggleTownColorByQuad(e) {
+            const town = e.target.parentNode;
+            if (e.button === 2) {
+                setTownBuilding(town);
+                return;
+            }
+            let colorToChange, quadrant;
+            if (e.target.classList.contains('nw')) {
+                colorToChange = 'r';
+                quadrant = 'nw';
+            } else if (e.target.classList.contains('se')) {
+                colorToChange = 'g';
+                quadrant = 'se';
+            } else if (e.target.classList.contains('ne')) {
+                colorToChange = 'b';
+                quadrant = 'ne'
+            } else if (e.target.classList.contains('sw')) {
+                colorToChange = 'y';
+                quadrant = 'sw'
+            }
+            changeTownColor(town, colorToChange, quadrant);
+        }
+
+        function setTownBuildingByCenter(e) {
+            const town = e.target.parentNode;
+            if (e.button === 2) {
+                setTownBuilding(town);
+                return;
+            }
+        }
+
+        function setupTown(t) {
+            const townColor = t.dataset.color;
+            const centerCells = t.querySelectorAll(".c");
+            for (var i = 0; i < centerCells.length; i++) {
+                centerCells[i].addEventListener("contextmenu", trapContextMenu);
+                centerCells[i].addEventListener("mousedown", setTownBuildingByCenter);
+                
+            }
+            const colorCells = t.querySelectorAll(".tc");
+            for (var i = 0; i < colorCells.length; i++) {
+                colorCells[i].classList.add(townColor)
+            }
+            const colorChangers = t.querySelectorAll(".tt");
+            for (var i = 0; i < colorChangers.length; i++) {
+                colorChangers[i].addEventListener("mousedown", toggleTownColorByOuter);
+                colorChangers[i].addEventListener("contextmenu", trapContextMenu);
+            }
+            const quadrants = t.querySelectorAll(".tc");
+            for (var i = 0; i < quadrants.length; i++) {
+                quadrants[i].addEventListener("mousedown", toggleTownColorByQuad);
+                quadrants[i].addEventListener("contextmenu", trapContextMenu);
+            }
+        }
+
+        var towns = document.querySelectorAll(".town-grid");
+        for (var i = 0; i < towns.length; i++) {
+            if (towns[i] != null && towns[i] !== undefined) {
+                setupTown(towns[i]);
+            }
+        }
+    </script>
+</footer>
+</html>
