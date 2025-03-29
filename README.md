@@ -18,4 +18,4 @@ A simple speedrun tracker for Doshin the Giant (GameCube) by psyouloveme.
 
 ## Town Color Tracker
 * Left-click the quadrants of the town indicators on the map to mark their current color
-* Right-clicking a town indicator on the map will set the matching monuemt to "in-progress"
+* Right-clicking a town indicator on the map will set the matching monument to "in-progress"
