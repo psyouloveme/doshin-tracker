@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <!-- 
         Monument & Town Color Tracker for Doshin the Giant
-        v1.3 by psyouloveme
+        v1.4 by psyouloveme
         480x640 (portrait)
     -->
     <meta charset="UTF-8" />
-    <title>Doshin Tracker</title>
+    <title>v1 Doshin Tracker</title>
     <style type="text/css">
         body {
             padding: 0px;
@@ -15,6 +16,7 @@
             background-color: black;
             overflow: hidden;
         }
+
         .main-grid {
             background-color: black;
             display: grid;
@@ -29,6 +31,7 @@
             box-sizing: border-box;
             height: 320px;
         }
+
         .monument {
             width: 114px;
             height: 74px;
@@ -38,15 +41,17 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0px; 
+            margin: 0px;
             padding: 0px;
         }
-        .completed {
-            mix-blend-mode: color;
-        }
+
+        /* .monument[data-complete = "1"] {
+            background-blend-mode: color;
+        } */
         .hidden {
             display: none;
         }
+
         .outer-wrap {
             display: flex;
             flex-direction: column;
@@ -56,6 +61,7 @@
             margin: 0px;
             width: 480px;
         }
+
         .town-grid-wrapper {
             background-image: url('./img/map.png');
             height: 320px;
@@ -66,75 +72,152 @@
             flex-grow: 0;
             image-rendering: pixelated;
         }
-        
+
         .town-grid {
             display: grid;
             grid-template-columns: 14px repeat(8, 7px) 14px;
-            grid-template-rows:    14px repeat(8, 7px) 14px;
+            grid-template-rows: 14px repeat(8, 7px) 14px;
         }
-        .town-border-red, .tcr, .r {
+
+        .town-border-red,
+        .tcr,
+        .r {
             background-color: #ff0000;
         }
-        .town-border-yellow, .tcy, .y {
+
+        .town-border-yellow,
+        .tcy,
+        .y {
             background-color: #ffff00;
         }
-        .town-border-green, .tcg, .g {
+
+        .town-border-green,
+        .tcg,
+        .g {
             background-color: #00db29;
         }
-        .town-border-blue, .tcb, .b {
+
+        .town-border-blue,
+        .tcb,
+        .b {
             background-color: #004dff;
         }
-        .town-border-box, .tb {
+
+        .town-border-box,
+        .tb {
             background-color: black;
         }
 
-        .tt, .tcr, .tcy,
-        .tcb, .tcg,
-        .tb,  .tc {
+        .tt,
+        .tcr,
+        .tcy,
+        .tcb,
+        .tcg,
+        .tb,
+        .tc {
             min-height: 7px;
-            min-width:  7px;
+            min-width: 7px;
         }
+
         .town-grid {
             height: 84px;
             width: 84px;
             border: 4px solid black;
         }
+
         #town-grid-red {
             position: relative;
             top: 11px;
             left: 247px;
         }
+
         #town-grid-blue {
             position: relative;
             top: 16px;
             left: 355px;
         }
+
         #town-grid-green {
             position: relative;
             top: -69px;
             left: 208px;
         }
+
         #town-grid-yellow {
             position: relative;
             top: -55px;
             left: 34px;
         }
+
+        #town-grid-yellow-blue {
+            position: relative;
+            top: -156px;
+            left: 285px;
+        }
+
         /* .tcy, .tcb, .tcg, .tcr {
             background-color: rgba(0, 0, 0, 0);
         } */
-        @keyframes spin {
-            from { transform: rotate(0deg) }
-            to { transform: rotate(360deg) }
+        .building-wrapper {
+            height: 64px;
+            width: 64px;
+            x: 50%;
+            y: 50%;
+            display: contents;
+            position: fixed;
         }
-        .spin { animation: spin 3s linear infinite; }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg)
+            }
+
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        /* estimated 3.75s = 1 minute igt */
+        .spin {
+            animation: spin 3.75s linear infinite;
+        }
+
+        .buildTimer {
+            z-index: 3;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 36px;
+            color: white;
+            /* text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; */
+            /* offset-x | offset-y | blur-radius | color */
+            
+            /* text-shadow:
+                1px 1px 2px black,
+                0 0 1em navy,
+                0 0 0.2em darkred; */
+
+            text-shadow:
+                 2px  2px 2px black,
+                -2px -2px 2px black,
+                -2px  2px 2px black,
+                 2px -2px 2px black;
+                /* 0 0 1em navy,
+                0 0 0.2em darkred; */
+            font-weight: 700;
+        }
+
         .building {
             width: 64px;
             height: 64px;
+            z-index: 2;
+            position: fixed;
         }
+
         /* .town-grid {
             display: none;
         } */
     </style>
+    <link rel="prefetch" href="./img/map.png" />
+    <link rel="prefetch" href="./img/building.png" />
     <link rel="prefetch" href="./img/01.png" />
     <link rel="prefetch" href="./img/02.png" />
     <link rel="prefetch" href="./img/03.png" />
@@ -168,129 +251,685 @@
     <link rel="prefetch" href="./img/15-love-overlay.png" />
     <link rel="prefetch" href="./img/16-love-overlay.png" />
 </head>
+
 <body>
     <div class="outer-wrap">
         <div class="main-grid">
-            <div class="monument" style="background-image: url('./img/01.png');" data-complete="false" data-building="false" data-default-image="./img/01.png" data-complete-image="./img/01-love-overlay.png" data-r="1" data-b="0" data-y="0" data-g="0" ></div>
-            <div class="monument" style="background-image: url('./img/02.png');" data-complete="false" data-building="false" data-default-image="./img/02.png" data-complete-image="./img/02-love-overlay.png" data-r="0" data-b="1" data-y="0" data-g="0" ></div>
-            <div class="monument" style="background-image: url('./img/03.png');" data-complete="false" data-building="false" data-default-image="./img/03.png" data-complete-image="./img/03-love-overlay.png" data-r="0" data-b="0" data-y="1" data-g="0" ></div>
-            <div class="monument" style="background-image: url('./img/04.png');" data-complete="false" data-building="false" data-default-image="./img/04.png" data-complete-image="./img/04-love-overlay.png" data-r="0" data-b="0" data-y="0" data-g="1" ></div>
-            <div class="monument" style="background-image: url('./img/05.png');" data-complete="false" data-building="false" data-default-image="./img/05.png" data-complete-image="./img/05-love-overlay.png" data-r="1" data-b="1" data-y="0" data-g="0" ></div>
-            <div class="monument" style="background-image: url('./img/06.png');" data-complete="false" data-building="false" data-default-image="./img/06.png" data-complete-image="./img/06-love-overlay.png" data-r="1" data-b="0" data-y="1" data-g="0" ></div>
-            <div class="monument" style="background-image: url('./img/07.png');" data-complete="false" data-building="false" data-default-image="./img/07.png" data-complete-image="./img/07-love-overlay.png" data-r="1" data-b="0" data-y="0" data-g="1" ></div>
-            <div class="monument" style="background-image: url('./img/08.png');" data-complete="false" data-building="false" data-default-image="./img/08.png" data-complete-image="./img/08-love-overlay.png" data-r="0" data-b="1" data-y="1" data-g="0" ></div>
-            <div class="monument" style="background-image: url('./img/09.png');" data-complete="false" data-building="false" data-default-image="./img/09.png" data-complete-image="./img/09-love-overlay.png" data-r="0" data-b="1" data-y="0" data-g="1" ></div>
-            <div class="monument" style="background-image: url('./img/10.png');" data-complete="false" data-building="false" data-default-image="./img/10.png" data-complete-image="./img/10-love-overlay.png" data-r="0" data-b="0" data-y="1" data-g="1" ></div>
-            <div class="monument" style="background-image: url('./img/11.png');" data-complete="false" data-building="false" data-default-image="./img/11.png" data-complete-image="./img/11-love-overlay.png" data-r="1" data-b="1" data-y="1" data-g="0" ></div>
-            <div class="monument" style="background-image: url('./img/12.png');" data-complete="false" data-building="false" data-default-image="./img/12.png" data-complete-image="./img/12-love-overlay.png" data-r="1" data-b="1" data-y="0" data-g="1" ></div>
-            <div class="monument" style="background-image: url('./img/13.png');" data-complete="false" data-building="false" data-default-image="./img/13.png" data-complete-image="./img/13-love-overlay.png" data-r="1" data-b="0" data-y="1" data-g="1" ></div>
-            <div class="monument" style="background-image: url('./img/14.png');" data-complete="false" data-building="false" data-default-image="./img/14.png" data-complete-image="./img/14-love-overlay.png" data-r="0" data-b="1" data-y="1" data-g="1" ></div>
-            <div class="monument" style="background-image: url('./img/15.png');" data-complete="false" data-building="false" data-default-image="./img/15.png" data-complete-image="./img/15-love-overlay.png" data-r="1" data-b="1" data-y="1" data-g="1" ></div>
-            <div class="monument" style="background-image: url('./img/16.png');" data-complete="false" data-building="false" data-default-image="./img/16.png" data-complete-image="./img/16-love-overlay.png" data-r="0" data-b="0" data-y="0" data-g="0" ></div>
+            <div class="monument" data-id="01" data-complete="0" data-building="0" data-r="1" data-b="0" data-y="0"
+                data-g="0"></div>
+            <div class="monument" data-id="02" data-complete="0" data-building="0" data-r="0" data-b="1" data-y="0"
+                data-g="0"></div>
+            <div class="monument" data-id="03" data-complete="0" data-building="0" data-r="0" data-b="0" data-y="1"
+                data-g="0"></div>
+            <div class="monument" data-id="04" data-complete="0" data-building="0" data-r="0" data-b="0" data-y="0"
+                data-g="1"></div>
+            <div class="monument" data-id="05" data-complete="0" data-building="0" data-r="1" data-b="1" data-y="0"
+                data-g="0"></div>
+            <div class="monument" data-id="06" data-complete="0" data-building="0" data-r="1" data-b="0" data-y="1"
+                data-g="0"></div>
+            <div class="monument" data-id="07" data-complete="0" data-building="0" data-r="1" data-b="0" data-y="0"
+                data-g="1"></div>
+            <div class="monument" data-id="08" data-complete="0" data-building="0" data-r="0" data-b="1" data-y="1"
+                data-g="0"></div>
+            <div class="monument" data-id="09" data-complete="0" data-building="0" data-r="0" data-b="1" data-y="0"
+                data-g="1"></div>
+            <div class="monument" data-id="10" data-complete="0" data-building="0" data-r="0" data-b="0" data-y="1"
+                data-g="1"></div>
+            <div class="monument" data-id="11" data-complete="0" data-building="0" data-r="1" data-b="1" data-y="1"
+                data-g="0"></div>
+            <div class="monument" data-id="12" data-complete="0" data-building="0" data-r="1" data-b="1" data-y="0"
+                data-g="1"></div>
+            <div class="monument" data-id="13" data-complete="0" data-building="0" data-r="1" data-b="0" data-y="1"
+                data-g="1"></div>
+            <div class="monument" data-id="14" data-complete="0" data-building="0" data-r="0" data-b="1" data-y="1"
+                data-g="1"></div>
+            <div class="monument" data-id="15" data-complete="0" data-building="0" data-r="1" data-b="1" data-y="1"
+                data-g="1"></div>
+            <div class="monument" data-id="16" data-complete="0" data-building="0" data-r="0" data-b="0" data-y="0"
+                data-g="0"></div>
         </div>
         <div class="town-grid-wrapper">
             <div class="town-grid" id="town-grid-red" data-color="r" data-r="1" data-b="0" data-g="0" data-y="0">
-                <div class="tt r"></div> <div class="tt r"></div>   <div class="tt r"></div>  <div class="tt r"></div>  <div class="tt r"></div>  <div class="tt b"></div>  <div class="tt b"></div>  <div class="tt b"></div>  <div class="tt b"></div>  <div class="tt b"></div> 
-                <div class="tt r"></div> <div class="tc nw"></div>  <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tt b"></div> 
-                <div class="tt r"></div> <div class="tc nw"></div>  <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tt b"></div>
-                <div class="tt r"></div> <div class="tc nw"></div>  <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tt b"></div>
-                <div class="tt r"></div> <div class="tc nw"></div>  <div class="tc nw"></div> <div class="tc nw"></div> <div class="tcr c"></div>   <div class="tcr c"></div>   <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tt b"></div>
-                <div class="tt y"></div> <div class="tc sw"></div>  <div class="tc sw"></div> <div class="tc sw"></div> <div class="tcr c"></div>   <div class="tcr c"></div>   <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tt g"></div>
-                <div class="tt y"></div> <div class="tc sw"></div>  <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tt g"></div>
-                <div class="tt y"></div> <div class="tc sw"></div>  <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tt g"></div>
-                <div class="tt y"></div> <div class="tc sw"></div>  <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tt g"></div>  
-                <div class="tt y"></div> <div class="tt y"></div>   <div class="tt y"></div>  <div class="tt y"></div>  <div class="tt y"></div>  <div class="tt g"></div>  <div class="tt g"></div>  <div class="tt g"></div>  <div class="tt g"></div>  <div class="tt g"></div> 
+                <div class="tt r"></div>
+                <div class="tt r"></div>
+                <div class="tt r"></div>
+                <div class="tt r"></div>
+                <div class="tt r"></div>
+                <div class="tt b"></div>
+                <div class="tt b"></div>
+                <div class="tt b"></div>
+                <div class="tt b"></div>
+                <div class="tt b"></div>
+                <div class="tt r"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tt b"></div>
+                <div class="tt r"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tt b"></div>
+                <div class="tt r"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tt b"></div>
+                <div class="tt r"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tcr c"></div>
+                <div class="tcr c"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tt b"></div>
+                <div class="tt y"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tcr c"></div>
+                <div class="tcr c"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tt g"></div>
+                <div class="tt y"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tt g"></div>
+                <div class="tt y"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tt g"></div>
+                <div class="tt y"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tt g"></div>
+                <div class="tt y"></div>
+                <div class="tt y"></div>
+                <div class="tt y"></div>
+                <div class="tt y"></div>
+                <div class="tt y"></div>
+                <div class="tt g"></div>
+                <div class="tt g"></div>
+                <div class="tt g"></div>
+                <div class="tt g"></div>
+                <div class="tt g"></div>
             </div>
             <div class="town-grid" id="town-grid-blue" data-color="b" data-r="0" data-b="1" data-g="0" data-y="0">
-                <div class="tt r"></div> <div class="tt r"></div>   <div class="tt r"></div>  <div class="tt r"></div>  <div class="tt r"></div>  <div class="tt b"></div>  <div class="tt b"></div>  <div class="tt b"></div>  <div class="tt b"></div>  <div class="tt b"></div> 
-                <div class="tt r"></div> <div class="tc nw"></div>  <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tt b"></div> 
-                <div class="tt r"></div> <div class="tc nw"></div>  <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tt b"></div>
-                <div class="tt r"></div> <div class="tc nw"></div>  <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tt b"></div>
-                <div class="tt r"></div> <div class="tc nw"></div>  <div class="tc nw"></div> <div class="tc nw"></div> <div class="tcb c"></div>   <div class="tcb c"></div>   <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tt b"></div>
-                <div class="tt y"></div> <div class="tc sw"></div>  <div class="tc sw"></div> <div class="tc sw"></div> <div class="tcb c"></div>   <div class="tcb c"></div>   <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tt g"></div>
-                <div class="tt y"></div> <div class="tc sw"></div>  <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tt g"></div>
-                <div class="tt y"></div> <div class="tc sw"></div>  <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tt g"></div>
-                <div class="tt y"></div> <div class="tc sw"></div>  <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tt g"></div>  
-                <div class="tt y"></div> <div class="tt y"></div>   <div class="tt y"></div>  <div class="tt y"></div>  <div class="tt y"></div>  <div class="tt g"></div>  <div class="tt g"></div>  <div class="tt g"></div>  <div class="tt g"></div>  <div class="tt g"></div>             </div> 
+                <div class="tt r"></div>
+                <div class="tt r"></div>
+                <div class="tt r"></div>
+                <div class="tt r"></div>
+                <div class="tt r"></div>
+                <div class="tt b"></div>
+                <div class="tt b"></div>
+                <div class="tt b"></div>
+                <div class="tt b"></div>
+                <div class="tt b"></div>
+                <div class="tt r"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tt b"></div>
+                <div class="tt r"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tt b"></div>
+                <div class="tt r"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tt b"></div>
+                <div class="tt r"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tcb c"></div>
+                <div class="tcb c"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tt b"></div>
+                <div class="tt y"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tcb c"></div>
+                <div class="tcb c"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tt g"></div>
+                <div class="tt y"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tt g"></div>
+                <div class="tt y"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tt g"></div>
+                <div class="tt y"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tt g"></div>
+                <div class="tt y"></div>
+                <div class="tt y"></div>
+                <div class="tt y"></div>
+                <div class="tt y"></div>
+                <div class="tt y"></div>
+                <div class="tt g"></div>
+                <div class="tt g"></div>
+                <div class="tt g"></div>
+                <div class="tt g"></div>
+                <div class="tt g"></div>
+            </div>
             <div class="town-grid" id="town-grid-green" data-color="g" data-r="0" data-b="0" data-g="1" data-y="0">
-                <div class="tt r"></div> <div class="tt r"></div>   <div class="tt r"></div>  <div class="tt r"></div>  <div class="tt r"></div>  <div class="tt b"></div>  <div class="tt b"></div>  <div class="tt b"></div>  <div class="tt b"></div>  <div class="tt b"></div> 
-                <div class="tt r"></div> <div class="tc nw"></div>  <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tt b"></div> 
-                <div class="tt r"></div> <div class="tc nw"></div>  <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tt b"></div>
-                <div class="tt r"></div> <div class="tc nw"></div>  <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tt b"></div>
-                <div class="tt r"></div> <div class="tc nw"></div>  <div class="tc nw"></div> <div class="tc nw"></div> <div class="tcg c"></div>   <div class="tcg c"></div>   <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tt b"></div>
-                <div class="tt y"></div> <div class="tc sw"></div>  <div class="tc sw"></div> <div class="tc sw"></div> <div class="tcg c"></div>   <div class="tcg c"></div>   <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tt g"></div>
-                <div class="tt y"></div> <div class="tc sw"></div>  <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tt g"></div>
-                <div class="tt y"></div> <div class="tc sw"></div>  <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tt g"></div>
-                <div class="tt y"></div> <div class="tc sw"></div>  <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tt g"></div>  
-                <div class="tt y"></div> <div class="tt y"></div>   <div class="tt y"></div>  <div class="tt y"></div>  <div class="tt y"></div>  <div class="tt g"></div>  <div class="tt g"></div>  <div class="tt g"></div>  <div class="tt g"></div>  <div class="tt g"></div> 
-            </div> 
+                <div class="tt r"></div>
+                <div class="tt r"></div>
+                <div class="tt r"></div>
+                <div class="tt r"></div>
+                <div class="tt r"></div>
+                <div class="tt b"></div>
+                <div class="tt b"></div>
+                <div class="tt b"></div>
+                <div class="tt b"></div>
+                <div class="tt b"></div>
+                <div class="tt r"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tt b"></div>
+                <div class="tt r"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tt b"></div>
+                <div class="tt r"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tt b"></div>
+                <div class="tt r"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tcg c"></div>
+                <div class="tcg c"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tt b"></div>
+                <div class="tt y"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tcg c"></div>
+                <div class="tcg c"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tt g"></div>
+                <div class="tt y"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tt g"></div>
+                <div class="tt y"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tt g"></div>
+                <div class="tt y"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tt g"></div>
+                <div class="tt y"></div>
+                <div class="tt y"></div>
+                <div class="tt y"></div>
+                <div class="tt y"></div>
+                <div class="tt y"></div>
+                <div class="tt g"></div>
+                <div class="tt g"></div>
+                <div class="tt g"></div>
+                <div class="tt g"></div>
+                <div class="tt g"></div>
+            </div>
             <div class="town-grid" id="town-grid-yellow" data-color="y" data-r="0" data-b="0" data-g="0" data-y="1">
-                <div class="tt r"></div> <div class="tt r"></div>   <div class="tt r"></div>  <div class="tt r"></div>  <div class="tt r"></div>  <div class="tt b"></div>  <div class="tt b"></div>  <div class="tt b"></div>  <div class="tt b"></div>  <div class="tt b"></div> 
-                <div class="tt r"></div> <div class="tc nw"></div>  <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tt b"></div> 
-                <div class="tt r"></div> <div class="tc nw"></div>  <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tt b"></div>
-                <div class="tt r"></div> <div class="tc nw"></div>  <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc nw"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tt b"></div>
-                <div class="tt r"></div> <div class="tc nw"></div>  <div class="tc nw"></div> <div class="tc nw"></div> <div class="tcy c"></div>   <div class="tcy c"></div>   <div class="tc ne"></div> <div class="tc ne"></div> <div class="tc ne"></div> <div class="tt b"></div>
-                <div class="tt y"></div> <div class="tc sw"></div>  <div class="tc sw"></div> <div class="tc sw"></div> <div class="tcy c"></div>   <div class="tcy c"></div>   <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tt g"></div>
-                <div class="tt y"></div> <div class="tc sw"></div>  <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tt g"></div>
-                <div class="tt y"></div> <div class="tc sw"></div>  <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tt g"></div>
-                <div class="tt y"></div> <div class="tc sw"></div>  <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc sw"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tc se"></div> <div class="tt g"></div>  
-                <div class="tt y"></div> <div class="tt y"></div>   <div class="tt y"></div>  <div class="tt y"></div>  <div class="tt y"></div>  <div class="tt g"></div>  <div class="tt g"></div>  <div class="tt g"></div>  <div class="tt g"></div>  <div class="tt g"></div> 
+                <div class="tt r"></div>
+                <div class="tt r"></div>
+                <div class="tt r"></div>
+                <div class="tt r"></div>
+                <div class="tt r"></div>
+                <div class="tt b"></div>
+                <div class="tt b"></div>
+                <div class="tt b"></div>
+                <div class="tt b"></div>
+                <div class="tt b"></div>
+                <div class="tt r"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tt b"></div>
+                <div class="tt r"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tt b"></div>
+                <div class="tt r"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tt b"></div>
+                <div class="tt r"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tcy c"></div>
+                <div class="tcy c"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tt b"></div>
+                <div class="tt y"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tcy c"></div>
+                <div class="tcy c"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tt g"></div>
+                <div class="tt y"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tt g"></div>
+                <div class="tt y"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tt g"></div>
+                <div class="tt y"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tt g"></div>
+                <div class="tt y"></div>
+                <div class="tt y"></div>
+                <div class="tt y"></div>
+                <div class="tt y"></div>
+                <div class="tt y"></div>
+                <div class="tt g"></div>
+                <div class="tt g"></div>
+                <div class="tt g"></div>
+                <div class="tt g"></div>
+                <div class="tt g"></div>
+            </div>
+            <div class="town-grid" id="town-grid-yellow-blue" data-color="by" data-r="0" data-b="1" data-g="0"
+                data-y="1">
+                <div class="tt r"></div>
+                <div class="tt r"></div>
+                <div class="tt r"></div>
+                <div class="tt r"></div>
+                <div class="tt r"></div>
+                <div class="tt b"></div>
+                <div class="tt b"></div>
+                <div class="tt b"></div>
+                <div class="tt b"></div>
+                <div class="tt b"></div>
+                <div class="tt r"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tt b"></div>
+                <div class="tt r"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tt b"></div>
+                <div class="tt r"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tt b"></div>
+                <div class="tt r"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tc nw"></div>
+                <div class="tcy c"></div>
+                <div class="tcb c"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tc ne"></div>
+                <div class="tt b"></div>
+                <div class="tt y"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tcy c"></div>
+                <div class="tcb c"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tt g"></div>
+                <div class="tt y"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tt g"></div>
+                <div class="tt y"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tt g"></div>
+                <div class="tt y"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc sw"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tc se"></div>
+                <div class="tt g"></div>
+                <div class="tt y"></div>
+                <div class="tt y"></div>
+                <div class="tt y"></div>
+                <div class="tt y"></div>
+                <div class="tt y"></div>
+                <div class="tt g"></div>
+                <div class="tt g"></div>
+                <div class="tt g"></div>
+                <div class="tt g"></div>
+                <div class="tt g"></div>
             </div>
         </div>
     </div>
 </body>
 <footer>
     <script type="text/javascript">
-        function swapImages(monumentCell) {
-            if (monumentCell !== null && monumentCell !== undefined) {
-                const isComplete = monumentCell.dataset.complete === "true";
-                const isBuilding = monumentCell.dataset.building === "true";
-                let newImage;
-                if (isComplete) {
-                    newImage = monumentCell.dataset.defaultImage;
-                } else {
-                    newImage = monumentCell.dataset.completeImage;
-                }
-                if (isBuilding) {
-                    monumentCell.dataset.building = "false";
-                    monumentCell.firstElementChild.remove();
-                }
-                monumentCell.dataset.complete = isComplete ? "false" : "true";
-                monumentCell.style.backgroundImage = "url('" + newImage + "')";
-                
+        const imagesBasePath = "./img";
+        const monumentCompletePostfix = "-love-overlay.png";
+        const monumentDefaultPostfix = ".png";
+        const BuildingImage = `${imagesBasePath}/building.png`;
+        const monumentTimeouts = [];
+
+        function buildMonumentImagePath(id, complete) {
+            let idString;
+            if (typeof id !== "string" && id < 10) {
+                idString = `0${id}`;
+            } else {
+                idString = id;
+            }
+            if (complete) {
+                return `${imagesBasePath}/${idString}${monumentCompletePostfix}`;
+            } else {
+                return `${imagesBasePath}/${idString}${monumentDefaultPostfix}`;
             }
         }
 
+        function destroyBuildingTimer(id, monumentCell) {
+            if (monumentTimeouts[id - 1]) {
+                clearInterval(monumentTimeouts[id - 1])
+                monumentTimeouts[id - 1] = null;
+            }
+            monumentCell.dataset.buildTime = "0";
+        }
+
+        function clearBuilding(monumentCell) {
+            const id = parseInt(monumentCell.dataset.id);
+            monumentCell.dataset.building = "0";
+            // remove build timer
+            destroyBuildingTimer(id, monumentCell);
+            // remove children
+            while (monumentCell.firstChild) {
+                monumentCell.removeChild(monumentCell.lastChild);
+            }
+        }
+
+        function swapImages(monumentCell) {
+            if (monumentCell !== null && monumentCell !== undefined) {
+                const isComplete = monumentCell.dataset.complete === "1";
+                const isBuilding = monumentCell.dataset.building === "1";
+                const id = parseInt(monumentCell.dataset.id);
+                let newBackground;
+                if (isComplete) {
+                    newBackground = `url('${buildMonumentImagePath(id, false)}')`;
+                } else {
+                    newBackground = `url('${buildMonumentImagePath(id, true)}')`;
+                }
+                if (isBuilding) {
+                    clearBuilding(monumentCell);
+                }
+                monumentCell.dataset.complete = isComplete ? "0" : "1";
+                monumentCell.style.backgroundImage = newBackground;
+            }
+        }
+
+        function updateTimer(mon, tim) {
+            let t = parseInt(mon.dataset.buildTime);
+            t += 1;
+            mon.dataset.buildTime = t;
+            const s = t % 60;
+            tim.innerText = `${Math.floor(t / 60)}:${s < 10 ? '0' : ''}${s}`;
+        }
+
+        function createBuildingSpinner() {
+            const loadingImg = document.createElement("img");
+            loadingImg.src = BuildingImage;
+            loadingImg.classList.add("building");
+            loadingImg.classList.add("spin");
+            loadingImg.addEventListener("mousedown", onMouseDown);
+            loadingImg.addEventListener("contextmenu", trapContextMenu);
+            return loadingImg;
+        }
+
+        function createBuildingTimer(monumentCell) {
+            const id = parseInt(monumentCell.dataset.id);
+            destroyBuildingTimer(id, monumentCell);
+            const buildTimer = document.createElement("span");
+            buildTimer.classList.add("buildTimer")
+            buildTimer.innerText = "0:00";
+            buildTimer.addEventListener("mousedown", onMouseDown);
+            buildTimer.addEventListener("contextmenu", trapContextMenu);
+            monumentTimeouts[id - 1] = setInterval(updateTimer, 1000, monumentCell, buildTimer);
+            return buildTimer;
+        }
+
+        function createBuildingWrapper(monumentCell) {
+            const loadingDiv = document.createElement("div");
+            loadingDiv.classList.add('building-wrapper');
+            loadingDiv.addEventListener("mousedown", onMouseDown);
+            loadingDiv.addEventListener("contextmenu", trapContextMenu);
+            const spinner = createBuildingSpinner();
+            const timer = createBuildingTimer(monumentCell);
+            loadingDiv.append(spinner);
+            loadingDiv.append(timer);
+            return loadingDiv;
+        }
+
+
         function toggleBuilding(monumentCell) {
             if (monumentCell != null && monumentCell !== undefined) {
-                const isComplete = monumentCell.dataset.complete === "true";
-                const isBuilding = monumentCell.dataset.building === "true";
+                const isComplete = monumentCell.dataset.complete === "1";
+                const isBuilding = monumentCell.dataset.building === "1";
+                const id = parseInt(monumentCell.dataset.id);
                 let newImage;
                 if (isBuilding) {
-                    // remove loading indicator
-                    monumentCell.dataset.building = "false";
-                    monumentCell.firstElementChild.remove();
+                    clearBuilding(monumentCell);
                 } else {
                     if (isComplete) {
-                        monumentCell.dataset.complete = "false";
-                        monumentCell.style.backgroundImage = "url('" + monumentCell.dataset.defaultImage + "')";
+                        monumentCell.dataset.complete = "0";
+                        monumentCell.style.backgroundImage = `url('${buildMonumentImagePath(id, false)}')`;
                     }
                     // add loading indicator
-                    monumentCell.dataset.building = "true";
-                    const loadingImg = document.createElement("img");
-                    loadingImg.src = "./img/building.png";
-                    loadingImg.classList.add("building");
-                    loadingImg.classList.add("spin");
-                    loadingImg.addEventListener("mousedown", onMouseDown);
-                    loadingImg.addEventListener("contextmenu", trapContextMenu);
-                    monumentCell.append(loadingImg);
+                    monumentCell.dataset.building = "1";
+                    const buildingIndicator = createBuildingWrapper(monumentCell);
+                    monumentCell.append(buildingIndicator);
                 }
             }
         }
 
         function onMouseDown(e) {
             if (e.target != null && e.target !== undefined) {
-                const monumentCell = e.target.localName === "img" ? e.target.parentNode : e.target;
+                const monumentCell = e.target.closest(".monument");
                 if (e.button === 0) {
                     swapImages(monumentCell);
                 } else if (e.button === 2) {
@@ -313,25 +952,61 @@
             if (cells[i] != null && cells[i] !== undefined) {
                 cells[i].addEventListener("mousedown", onMouseDown);
                 cells[i].addEventListener("contextmenu", trapContextMenu);
+                cells[i].style.backgroundImage = `url(${buildMonumentImagePath(cells[i].dataset['id'], false)})`;
             }
         }
 
         function changeTownColor(town, colorToChange, quadrant) {
             const townColor = town.dataset.color;
-            if (colorToChange === townColor) {
+            if (townColor.length === 2) {
+                if (colorToChange === townColor[0]) {
+                    return;
+                } else if (colorToChange === townColor[1]) {
+                    return;
+                }
+            } else if (colorToChange === townColor) {
                 return;
             }
+
             let cellsToColor = town.querySelectorAll(`.tc.${quadrant}`);
             if (town.dataset[colorToChange] === "1") {
-                for (let i = 0; i < cellsToColor.length; i++) {
-                    cellsToColor[i].classList.remove(colorToChange)
-                    cellsToColor[i].classList.add(townColor)
+                if (townColor.length === 2) {
+                    let tc1 = townColor[0];
+                    let tc2 = townColor[1];
+                    for (let i = 0; i < cellsToColor.length; i++) {
+                        if (cellsToColor[i].classList.contains("ne") || cellsToColor[i].classList.contains("se")) {
+                            cellsToColor[i].classList.remove(colorToChange);
+                            cellsToColor[i].classList.add(tc1);
+                        } else {
+                            cellsToColor[i].classList.remove(colorToChange);
+                            cellsToColor[i].classList.add(tc2);
+                        }
+                    }
+                } else {
+                    for (let i = 0; i < cellsToColor.length; i++) {
+                        cellsToColor[i].classList.remove(colorToChange)
+                        cellsToColor[i].classList.add(townColor)
+                    }
                 }
                 town.dataset[colorToChange] = "0";
             } else {
-                for (let i = 0; i < cellsToColor.length; i++) {
-                    cellsToColor[i].classList.remove(townColor)
-                    cellsToColor[i].classList.add(colorToChange)
+                if (townColor.length === 2) {
+                    let tc1 = townColor[0];
+                    let tc2 = townColor[1];
+                    for (let i = 0; i < cellsToColor.length; i++) {
+                        if (cellsToColor[i].classList.contains("ne") || cellsToColor[i].classList.contains("se")) {
+                            cellsToColor[i].classList.remove(tc1);
+                            cellsToColor[i].classList.add(colorToChange);
+                        } else {
+                            cellsToColor[i].classList.remove(tc2);
+                            cellsToColor[i].classList.add(colorToChange);
+                        }
+                    }
+                } else {
+                    for (let i = 0; i < cellsToColor.length; i++) {
+                        cellsToColor[i].classList.remove(townColor)
+                        cellsToColor[i].classList.add(colorToChange)
+                    }
                 }
                 town.dataset[colorToChange] = "1";
             }
@@ -345,7 +1020,8 @@
                 g: monumentOrTown.dataset['g'] === "1"
             };
         }
-        function compareColors (a, b) {
+
+        function compareColors(a, b) {
             if (a === null || a === undefined || b === null || b === undefined) {
                 return false;
             }
@@ -378,33 +1054,54 @@
             }
         }
 
+        function setTownComplete(town) {
+            const townColors = getColors(town);
+            var cells = document.querySelectorAll(".monument");
+            for (var i = 0; i < cells.length; i++) {
+                if (cells[i] != null && cells[i] !== undefined) {
+                    const monumentColors = getColors(cells[i]);
+                    if (compareColors(townColors, monumentColors)) {
+                        swapImages(cells[i]);
+                        return;
+                    }
+                }
+            }
+        }
+
         function toggleTownColorByOuter(e) {
             const town = e.target.parentNode;
             if (e.button === 2) {
                 setTownBuilding(town);
                 return;
+            } else if (e.button === 1) {
+                setTownComplete(town);
+                return;
+            } else {
+                let colorToChange, quadrant;
+                if (e.target.classList.contains('r')) {
+                    colorToChange = 'r';
+                    quadrant = 'nw';
+                } else if (e.target.classList.contains('g')) {
+                    colorToChange = 'g';
+                    quadrant = 'se';
+                } else if (e.target.classList.contains('b')) {
+                    colorToChange = 'b';
+                    quadrant = 'ne'
+                } else if (e.target.classList.contains('y')) {
+                    colorToChange = 'y';
+                    quadrant = 'sw'
+                }
+                changeTownColor(town, colorToChange, quadrant);
             }
-            let colorToChange, quadrant;
-            if (e.target.classList.contains('r')) {
-                colorToChange = 'r';
-                quadrant = 'nw';
-            } else if (e.target.classList.contains('g')) {
-                colorToChange = 'g';
-                quadrant = 'se';
-            } else if (e.target.classList.contains('b')) {
-                colorToChange = 'b';
-                quadrant = 'ne'
-            } else if (e.target.classList.contains('y')) {
-                colorToChange = 'y';
-                quadrant = 'sw'
-            }
-            changeTownColor(town, colorToChange, quadrant);
         }
 
         function toggleTownColorByQuad(e) {
             const town = e.target.parentNode;
             if (e.button === 2) {
                 setTownBuilding(town);
+                return;
+            } else if (e.button === 1) {
+                setTownComplete(town);
                 return;
             }
             let colorToChange, quadrant;
@@ -416,10 +1113,10 @@
                 quadrant = 'se';
             } else if (e.target.classList.contains('ne')) {
                 colorToChange = 'b';
-                quadrant = 'ne'
+                quadrant = 'ne';
             } else if (e.target.classList.contains('sw')) {
                 colorToChange = 'y';
-                quadrant = 'sw'
+                quadrant = 'sw';
             }
             changeTownColor(town, colorToChange, quadrant);
         }
@@ -428,6 +1125,9 @@
             const town = e.target.parentNode;
             if (e.button === 2) {
                 setTownBuilding(town);
+                return;
+            } else if (e.button === 1) {
+                setTownComplete(town);
                 return;
             }
         }
@@ -438,11 +1138,21 @@
             for (var i = 0; i < centerCells.length; i++) {
                 centerCells[i].addEventListener("contextmenu", trapContextMenu);
                 centerCells[i].addEventListener("mousedown", setTownBuildingByCenter);
-                
+
             }
             const colorCells = t.querySelectorAll(".tc");
             for (var i = 0; i < colorCells.length; i++) {
-                colorCells[i].classList.add(townColor)
+                if (townColor.length === 2) {
+                    let tc1 = townColor[0];
+                    let tc2 = townColor[1];
+                    if (colorCells[i].classList.contains("ne") || colorCells[i].classList.contains("se")) {
+                        colorCells[i].classList.add(tc1);
+                    } else {
+                        colorCells[i].classList.add(tc2);
+                    }
+                } else {
+                    colorCells[i].classList.add(townColor);
+                }
             }
             const colorChangers = t.querySelectorAll(".tt");
             for (var i = 0; i < colorChangers.length; i++) {
@@ -464,4 +1174,5 @@
         }
     </script>
 </footer>
+
 </html>
